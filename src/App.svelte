@@ -12,6 +12,7 @@ let level = 1;
 let speed = 15;
 let interval;
 const lap = 30;
+let start = false;
 
 function handleShoot() {
 	acheived++;
@@ -33,6 +34,10 @@ onMount(() => {
 
 function handleAway() {
 	away++;
+	if (away > 2) {
+		doGameOver();
+		return;
+	}
 	renderNewDove();
 }
 
@@ -40,18 +45,25 @@ function doGameOver() {
 	clearInterval(interval)
 }
 
-interval = setInterval(() => {
-	time++;
-	timer = new Date(time * 1000).toISOString().substr(11, 8);
-	if (time % lap === 0) {
-		level++
-		if(speed !== 0) {
-			speed--;
-		} else {
-			doGameOver()
-		}
-	}
-}, 1000);
+function startGame() {
+	interval = setInterval(() => {
+		time++;
+		timer = new Date(time * 1000).toISOString().substr(11, 8);
+			if (time % lap === 0) {
+				level++
+				if(speed !== 0) {
+					speed--;
+				} else {
+					doGameOver()
+				}
+			}
+		}, 1000);
+}
+
+function handleStart() {
+	start = true;
+	startGame();
+}
 
 </script>
 
@@ -62,16 +74,16 @@ interval = setInterval(() => {
 		display: flex;
 	}
 	.box {
+		background-image: url('../assets/clouds.png');
 		overflow: hidden;
 		background-color: skyblue;
 		border: 1px solid gray;
 		margin: 1rem;
 		width: 100%;
-		background-image: url("./assets/clouds.png");
 		background-size: cover;
    		background-position: center center;
 		position: relative;
-		cursor: move ;
+		cursor: url("../assets/target.cur"), move ;
 	}
 
 	.score {
@@ -115,18 +127,33 @@ interval = setInterval(() => {
 		font-size: 6rem;
 	}
 
+	.start {
+		margin: 1rem;
+		padding: .5rem;
+		background: red;
+		position: absolute;
+		left: 0;
+		top: calc(50% - 6rem);
+		color: black;
+		font-size: 6rem;
+	}
+
 </style>
 
 <div class="wrap">
 	<div id="box" class="box target-cursor" bind:this={box}>
+		
 		<div class="time">{ timer } level: {level}</div>
 		{#if acheived} <div class="score">you have shot {acheived} dove{#if acheived !== 1}s{/if}!</div> {/if}
 		{#if away} <div class="away">{away} dove{#if away !== 1}s{/if} have gone already!</div> {/if}
-		
-		{#if speed > 0}
-			{#if isDoveActive && boundary}<Dove on:shoot={handleShoot} bind:boundary={boundary} on:away={handleAway} bind:speed={speed} />{/if}
-		{:else} 
-			<div class="completed">GAME OVER</div>
+		{#if  start}
+			{#if speed > 0 && away < 3}
+				{#if isDoveActive && boundary}<Dove on:shoot={handleShoot} bind:boundary={boundary} on:away={handleAway} bind:speed={speed} />{/if}
+			{:else } 
+				<div class="completed">GAME OVER</div>
+			{/if}
+		{:else }
+			<div class="start" on:click={handleStart}>Start</div>
 		{/if}
 	
 		
