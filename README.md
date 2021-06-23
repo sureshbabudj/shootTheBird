@@ -1,6 +1,6 @@
 # Shoot The Bird (Simple GAME)
 
-'Shoot The Bird' is a simple game. I have tried to create dthis game with [svelte framework](https://svelte.dev/)
+'Shoot The Bird' is a simple game. I have tried to create this game with [svelte framework](https://svelte.dev/)
 
 
 ## Usage
